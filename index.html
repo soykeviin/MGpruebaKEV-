@@ -329,6 +329,7 @@ section {
     border-radius: 5px;
     height: 300px;
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
 }
 .gallery-img {
     position: absolute;
@@ -554,6 +555,23 @@ section {
 .section-spacing {
     padding: 40px 0;
 }
+/* Nuevas clases para efecto scroll en móvil */
+.gallery-item.mobile-active .primary-img {
+    opacity: 0 !important;
+}
+.gallery-item.mobile-active .hover-img {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+}
+.gallery-item.mobile-active .caption {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+.gallery-item.mobile-active {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+}
 @media (max-width: 1024px) {
     h1 {
         font-size: 2.5em;
@@ -642,6 +660,15 @@ section {
         margin-left: auto;
         margin-right: auto;
     }
+    /* Para móvil: restauramos la opacidad del caption */
+    .gallery-item .caption {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    /* Animación para el efecto de scroll */
+    .gallery-item {
+        transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
 }
 @media (min-width: 769px) and (max-width: 1024px) {
     .nosotros-grid {
@@ -712,7 +739,7 @@ section {
 <h2>Sobre nosotros</h2>
 <p>MG Arquitectura fusiona diseño contemporáneo con estilo clásico, creando espacios únicos y exclusivos. Nos especializamos en proyectos integrales y remodelaciones que superan expectativas.</p>
 <p>Innovación y funcionalidad definen nuestros servicios de alta calidad en construcción. Transformamos tus ideas en realidad con creatividad y precisión.</p>
-<button class="btn" onclick="location.href='#leer-mas'">Conoce nuestra metodología</button>
+<button class="btn" onclick="location.href='nosotros.html'">Conoce nuestra historia</button>
 </div>
 <img src="proyectos/png/myv.png" alt="Equipo MG Arquitectura" class="fade-up">
 </div>
@@ -836,7 +863,7 @@ document.getElementById("hamburgerBtn").onclick = () => {
 // Scroll events
 window.addEventListener('scroll', () => {
     const nav = document.getElementById("mainNav");
-
+    
     // Navbar al hacer scroll
     if (window.scrollY > 50) {
         nav.classList.add("scrolled");
@@ -845,49 +872,68 @@ window.addEventListener('scroll', () => {
             nav.classList.remove("scrolled");
         }
     }
-
+    
     // Elementos con animación
     const fadeElements = document.querySelectorAll('.fade-left, .fade-up, .gallery-item');
     const windowHeight = window.innerHeight;
-
+    
     fadeElements.forEach(el => {
         const elementTop = el.getBoundingClientRect().top;
         if (elementTop < windowHeight - 100) {
             el.classList.add('visible');
         }
     });
+    
+    // Efecto especial para galería en móvil
+    if (window.innerWidth <= 768) {
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const viewportCenter = window.innerHeight / 2;
+        const activationThreshold = 100; // Margen de activación
+        
+        galleryItems.forEach(item => {
+            const rect = item.getBoundingClientRect();
+            const itemCenter = rect.top + rect.height / 2;
+            const distanceToCenter = Math.abs(itemCenter - viewportCenter);
+            
+            if (distanceToCenter < activationThreshold) {
+                item.classList.add('mobile-active');
+            } else {
+                item.classList.remove('mobile-active');
+            }
+        });
+    }
 });
 
 // Inicializar elementos visibles al cargar
 document.addEventListener('DOMContentLoaded', () => {
     const fadeElements = document.querySelectorAll('.fade-left, .fade-up, .gallery-item');
     const windowHeight = window.innerHeight;
-
+    
     fadeElements.forEach(el => {
         const elementTop = el.getBoundingClientRect().top;
         if (elementTop < windowHeight - 100) {
             el.classList.add('visible');
         }
     });
-
+    
     // Mostrar WhatsApp después de 0.5 segundos
     setTimeout(() => {
         whatsappBtn.classList.add('visible');
     }, 500);
-
+    
     // Configuración para el slider táctil en móviles
     let touchStartX = 0;
     let touchEndX = 0;
-
+    
     header.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
     }, false);
-
+    
     header.addEventListener('touchend', (e) => {
         touchEndX = e.changedTouches[0].screenX;
         handleSwipe();
     }, false);
-
+    
     function handleSwipe() {
         if (touchEndX < touchStartX) {
             // Swipe left
