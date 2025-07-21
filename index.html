@@ -572,6 +572,130 @@ section {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     z-index: 10;
 }
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+.modal-content {
+    background-color: var(--dark);
+    margin: 10% auto;
+    padding: 30px;
+    border: 1px solid var(--gold);
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    animation: modalopen 0.5s;
+}
+@keyframes modalopen {
+    from {opacity: 0; transform: translateY(-50px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+.close {
+    color: var(--light);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close:hover {
+    color: var(--gold);
+}
+.modal h2 {
+    color: var(--gold);
+    margin-bottom: 20px;
+    font-size: 2em;
+}
+.modal p {
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+.contact-form input,
+.contact-form textarea,
+.contact-form select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: var(--dark);
+    color: var(--light);
+}
+.contact-form textarea {
+    height: 150px;
+}
+.contact-form button {
+    background-color: var(--gold);
+    color: var(--dark);
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+.contact-form button:hover {
+    background-color: var(--light);
+}
+.success-animation {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
+}
+.checkmark__circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: #c9a66b;
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+.checkmark {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: #fff;
+    stroke-miterlimit: 10;
+    margin: 10% auto;
+    box-shadow: inset 0px 0px 0px #c9a66b;
+    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+}
+.checkmark__check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+@keyframes stroke {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+@keyframes scale {
+    0%, 100% {
+        transform: none;
+    }
+    50% {
+        transform: scale3d(1.1, 1.1, 1);
+    }
+}
+@keyframes fill {
+    100% {
+        box-shadow: inset 0px 0px 0px 30px #c9a66b;
+    }
+}
 @media (max-width: 1024px) {
     h1 {
         font-size: 2.5em;
@@ -777,13 +901,15 @@ section {
 </div>
 </div>
 </div>
-<button class="btn" style="margin: 0 auto; display: block;">Explorar nuestros proyectos</button>
+<button class="btn" style="margin: 0 auto; display: block;" onclick="window.open('https://www.instagram.com/mgarquitecturaa_/#', '_blank')">
+    <i class="fab fa-instagram" style="color: var(--gold); margin-right: 10px;"></i> Explora nuestros proyectos
+</button>
 </section>
 <div class="section-spacing"></div>
 <section class="cta-section">
 <div class="cta-content">
 <h2 id="contacto">Tu espacio soñado a un click de distancia</h2>
-<button class="btn" onclick="location.href='https://wa.me/595984641877'">Solicitar presupuesto</button>
+<button class="btn" id="openModalBtn">Solicitar presupuesto</button>
 </div>
 <br>
 <div class="footer-content">
@@ -819,6 +945,38 @@ section {
 <p class="footer-credits">Sitio web diseñado y desarrollado por Kevin Caballero</p>
 </div>
 </section>
+<!-- Modal -->
+<div id="contactModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Contactar</h2>
+        <p>Por favor, complete el siguiente formulario para solicitar un presupuesto. Nos pondremos en contacto con usted lo antes posible.</p>
+        <form class="contact-form" id="contactForm" action="https://formspree.io/f/xgvzojdn" method="POST">
+            <input type="text" name="name" placeholder="Nombre" required>
+            <input type="email" name="email" placeholder="Correo Electrónico" required>
+            <input type="tel" name="phone" placeholder="Teléfono">
+            <select name="project_type" required>
+                <option value="" disabled selected>Tipo de proyecto</option>
+                <option value="Vivienda unifamiliar">Vivienda unifamiliar</option>
+                <option value="Ampliación">Ampliación</option>
+                <option value="Local comercial">Local comercial</option>
+                <option value="Reforma interior">Reforma interior</option>
+                <option value="Oficina">Oficina</option>
+                <option value="Otros">Otros</option>
+            </select>
+            <input type="text" name="location" placeholder="Ubicación del terreno o proyecto">
+            <input type="text" name="area" placeholder="Superficie estimada (en m²)">
+            <textarea name="description" placeholder="Breve descripción del proyecto" required></textarea>
+            <button type="submit">Enviar</button>
+        </form>
+        <div id="successAnimation" class="success-animation">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+    </div>
+</div>
 <!-- WhatsApp Button -->
 <a href="https://wa.me/595984641877" target="_blank" class="whatsapp-btn" id="whatsappBtn">
 <i class="fab fa-whatsapp"></i>
@@ -830,18 +988,15 @@ let currentIndex = 0;
 let sliderInterval;
 const header = document.querySelector('header');
 const whatsappBtn = document.getElementById('whatsappBtn');
-
 // Función para mostrar slide
 function showSlide(index) {
     header.style.backgroundImage = `url('${images[index]}')`;
     indicators.forEach((ind, idx) => ind.classList.toggle('active', idx === index));
     currentIndex = index;
 }
-
 // Iniciar slider
 sliderInterval = setInterval(() => showSlide((currentIndex + 1) % images.length), 7000);
 showSlide(0);
-
 // Eventos para indicadores
 indicators.forEach((ind, idx) => {
     ind.addEventListener('click', () => {
@@ -850,7 +1005,6 @@ indicators.forEach((ind, idx) => {
         sliderInterval = setInterval(() => showSlide((currentIndex + 1) % images.length), 7000);
     });
 });
-
 // Menú móvil
 document.getElementById("hamburgerBtn").onclick = () => {
     const menu = document.getElementById("mobileMenu");
@@ -859,11 +1013,9 @@ document.getElementById("hamburgerBtn").onclick = () => {
     menu.style.display = open ? "none" : "flex";
     nav.classList.add("scrolled");
 };
-
 // Scroll events
 window.addEventListener('scroll', () => {
     const nav = document.getElementById("mainNav");
-    
     // Navbar al hacer scroll
     if (window.scrollY > 50) {
         nav.classList.add("scrolled");
@@ -872,29 +1024,24 @@ window.addEventListener('scroll', () => {
             nav.classList.remove("scrolled");
         }
     }
-    
     // Elementos con animación
     const fadeElements = document.querySelectorAll('.fade-left, .fade-up, .gallery-item');
     const windowHeight = window.innerHeight;
-    
     fadeElements.forEach(el => {
         const elementTop = el.getBoundingClientRect().top;
         if (elementTop < windowHeight - 100) {
             el.classList.add('visible');
         }
     });
-    
     // Efecto especial para galería en móvil
     if (window.innerWidth <= 768) {
         const galleryItems = document.querySelectorAll('.gallery-item');
         const viewportCenter = window.innerHeight / 2;
         const activationThreshold = 100; // Margen de activación
-        
         galleryItems.forEach(item => {
             const rect = item.getBoundingClientRect();
             const itemCenter = rect.top + rect.height / 2;
             const distanceToCenter = Math.abs(itemCenter - viewportCenter);
-            
             if (distanceToCenter < activationThreshold) {
                 item.classList.add('mobile-active');
             } else {
@@ -903,37 +1050,30 @@ window.addEventListener('scroll', () => {
         });
     }
 });
-
 // Inicializar elementos visibles al cargar
 document.addEventListener('DOMContentLoaded', () => {
     const fadeElements = document.querySelectorAll('.fade-left, .fade-up, .gallery-item');
     const windowHeight = window.innerHeight;
-    
     fadeElements.forEach(el => {
         const elementTop = el.getBoundingClientRect().top;
         if (elementTop < windowHeight - 100) {
             el.classList.add('visible');
         }
     });
-    
     // Mostrar WhatsApp después de 0.5 segundos
     setTimeout(() => {
         whatsappBtn.classList.add('visible');
     }, 500);
-    
     // Configuración para el slider táctil en móviles
     let touchStartX = 0;
     let touchEndX = 0;
-    
     header.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
     }, false);
-    
     header.addEventListener('touchend', (e) => {
         touchEndX = e.changedTouches[0].screenX;
         handleSwipe();
     }, false);
-    
     function handleSwipe() {
         if (touchEndX < touchStartX) {
             // Swipe left
@@ -944,6 +1084,57 @@ document.addEventListener('DOMContentLoaded', () => {
             showSlide((currentIndex - 1 + images.length) % images.length);
         }
     }
+    // Modal functionality
+    const modal = document.getElementById("contactModal");
+    const openModalBtn = document.getElementById("openModalBtn");
+    const closeBtn = document.querySelector(".close");
+    openModalBtn.onclick = function() {
+        modal.style.display = "block";
+    }
+    closeBtn.onclick = function() {
+        modal.style.display = "none";
+    }
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    // Form submission
+    document.getElementById('contactForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                document.getElementById('contactForm').style.display = 'none';
+                document.getElementById('successAnimation').style.display = 'block';
+                form.reset();
+                setTimeout(() => {
+                    document.getElementById('successAnimation').style.display = 'none';
+                    document.getElementById('contactForm').style.display = 'block';
+                    modal.style.display = "none";
+                }, 3000);
+            } else {
+                response.json().then(data => {
+                    if (Object.hasOwn(data, 'errors')) {
+                        alert(data["errors"].map(error => error["message"]).join(", "));
+                    } else {
+                        alert('Oops! There was a problem submitting your form');
+                    }
+                });
+            }
+        })
+        .catch(error => {
+            alert('Oops! There was a problem submitting your form');
+        });
+    });
 });
 </script>
 </body>
