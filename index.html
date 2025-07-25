@@ -551,6 +551,54 @@ section {
     70% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
     100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
 }
+
+/* Botón Volver Arriba */
+.scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
+    background-color: var(--gold);
+    border: none;
+    border-radius: 50%;
+    color: var(--dark);
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    box-shadow: 0 4px 15px rgba(201, 166, 107, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scroll-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.scroll-to-top:hover {
+    background-color: var(--light);
+    transform: translateX(-50%) translateY(-3px);
+    box-shadow: 0 6px 20px rgba(201, 166, 107, 0.4);
+}
+
+.scroll-to-top:active {
+    transform: translateX(-50%) translateY(0);
+}
+
+.scroll-to-top i {
+    transition: transform 0.3s ease;
+}
+
+.scroll-to-top:hover i {
+    transform: translateY(-2px);
+}
 /* Spacing between sections */
 .section-spacing {
     padding: 40px 0;
@@ -768,6 +816,13 @@ section {
         bottom: 20px;
         right: 20px;
     }
+    
+    .scroll-to-top {
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+        bottom: 20px;
+    }
     .footer-bottom {
         flex-direction: column;
         gap: 10px;
@@ -981,6 +1036,11 @@ section {
 <a href="https://wa.me/595984641877" target="_blank" class="whatsapp-btn" id="whatsappBtn">
 <i class="fab fa-whatsapp"></i>
 </a>
+
+<!-- Botón Volver Arriba -->
+<button class="scroll-to-top" id="scrollToTopBtn" title="Volver arriba">
+<i class="fas fa-chevron-up"></i>
+</button>
 <script>
 const indicators = document.querySelectorAll('.indicator');
 const images = ['proyectos/portada/img01.png', 'proyectos/portada/img02.png', 'proyectos/portada/img03.png', 'proyectos/portada/img04.png'];
@@ -988,6 +1048,7 @@ let currentIndex = 0;
 let sliderInterval;
 const header = document.querySelector('header');
 const whatsappBtn = document.getElementById('whatsappBtn');
+const scrollToTopBtn = document.getElementById('scrollToTopBtn');
 // Función para mostrar slide
 function showSlide(index) {
     header.style.backgroundImage = `url('${images[index]}')`;
@@ -1049,6 +1110,17 @@ window.addEventListener('scroll', () => {
             }
         });
     }
+    
+    // Control del botón "Volver arriba"
+    const scrollPosition = window.scrollY;
+    const documentHeight = document.documentElement.scrollHeight;
+    const scrollThreshold = documentHeight / 2; // Aparece a la mitad de la página
+    
+    if (scrollPosition > scrollThreshold) {
+        scrollToTopBtn.classList.add('visible');
+    } else {
+        scrollToTopBtn.classList.remove('visible');
+    }
 });
 // Inicializar elementos visibles al cargar
 document.addEventListener('DOMContentLoaded', () => {
@@ -1099,6 +1171,19 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.style.display = "none";
         }
     }
+    // Botón volver arriba
+    scrollToTopBtn.addEventListener('click', function() {
+        const scrollDuration = 800; // 0.8 segundos para una animación más rápida
+        const scrollStep = -window.scrollY / (scrollDuration / 15);
+        const scrollInterval = setInterval(function() {
+            if (window.scrollY !== 0) {
+                window.scrollBy(0, scrollStep);
+            } else {
+                clearInterval(scrollInterval);
+            }
+        }, 15);
+    });
+    
     // Form submission
     document.getElementById('contactForm').addEventListener('submit', function(event) {
         event.preventDefault();
